@@ -11,11 +11,11 @@
                             <v-card-text>
                                 <form ref="form" @submit.prevent="isRegister ? register() : login()">
                                     <v-text-field
-                                        v-model="username"
-                                        name="username"
-                                        label="Username"
-                                        type="text"
-                                        placeholder="username"
+                                        v-model="email"
+                                        name="email"
+                                        label="Email"
+                                        type="email"
+                                        placeholder="pepe@mail.com"
                                         required
                                     ></v-text-field>
 
@@ -24,7 +24,6 @@
                                         name="password"
                                         label="Password"
                                         type="password"
-                                        placeholder="password"
                                         required
                                     ></v-text-field>
 
@@ -36,10 +35,14 @@
                                                   placeholder="cocnfirm password"
                                                   required
                                     ></v-text-field>
-                                    <div class="red--text"> {{errorMessage}}</div>
-                                    <v-btn type="submit" class="mt-4" color="primary" value="log in">{{isRegister ? stateObj.register.name : stateObj.login.name}}</v-btn>
-                                    <div class="grey--text mt-4" v-on:click="isRegister = !isRegister;">
-                                        {{toggleMessage}}
+                                    <div class="red--text"> {{ errorMessage }}</div>
+                                    <v-btn type="submit" class="mt-4" color="primary" value="log in"
+                                        v-if="buttonDisabled">
+                                        {{ isRegister ? stateObj.register.name : stateObj.login.name }}
+                                    </v-btn>
+                                    <div class="grey--text mt-4"
+                                         @click="isRegister = !isRegister;">
+                                        {{ toggleMessage }}
                                     </div>
                                 </form>
                             </v-card-text>
@@ -53,47 +56,115 @@
 </template>
 
 <script>
+
+import axios from "axios";
+
 export default {
     name: "LoginForm",
 
     data() {
         return {
-            username: "",
+            email: "",
             password: "",
             confirmPassword: "",
             isRegister : false,
             errorMessage: "",
+            buttonDisabled: false,
             stateObj: {
                 register :{
                     name: 'Register',
-                    message: 'Aleady have an Acoount? login.'
+                    message: 'Ya tenes una cuenta? Login.'
                 },
                 login : {
                     name: 'Login',
-                    message: 'Register'
+                    message: 'Registrate'
                 }
             }
         };
     },
     methods: {
+
         login() {
-            const { username } = this;
-            console.log(username + "logged in")
+
+            const { email, password } = this;
+
+            this.buttonDisabled = true;
+
+            // Process Login
+            axios.post(`${process.env.VUE_APP_API_URL}login`, {
+                email,
+                password,
+            },
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+            }).then( (response) => {
+
+                console.log(response.data);
+                // TODO: Process login
+
+            }).catch( (errResponse) => {
+
+                // Show error
+                this.errorMessage = errResponse.response.data.message;
+
+            }).finally( () => {
+
+                this.buttonDisabled = false;
+
+            });
         },
+
         register() {
+
+            // If the passwords are equals
             if(this.password == this.confirmPassword){
-                this.isRegister = false;
-                this.errorMessage = "";
-                this.$refs.form.reset();
-            }
-            else {
-                this.errorMessage = "password did not match"
+
+                const { email, password } = this;
+
+                this.buttonDisabled = true;
+
+                // Process Login
+                axios.post(`${process.env.VUE_APP_API_URL}register`, {
+                        email,
+                        password,
+                    },
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then( (response) => {
+
+                    console.log(response.data);
+                    // TODO: Process register
+
+                }).catch( (errResponse) => {
+
+                    // Show error
+                    this.errorMessage = errResponse.response.data.message;
+
+                }).finally( () => {
+
+                    // Clear vars
+                    this.isRegister = false;
+                    this.errorMessage = "";
+                    this.$refs.form.reset();
+                    this.buttonDisabled = false;
+
+                });
+
+            } else {
+                this.errorMessage = "Las contraseñas no coinciden"
             }
         }
     },
     computed: {
-        toggleMessage : function() {
-            return this.isRegister ? this.stateObj.register.message : this.stateObj.login.message }
+        toggleMessage: function () {
+            return this.isRegister ? this.stateObj.register.message : this.stateObj.login.message;
+        }
     }
 }
 </script>
