@@ -1,32 +1,14 @@
 <template>
-    <v-app>
-        <v-app-bar color="primary" app dark>
-            <div class="d-flex align-center">
-                <!-- LOGO -->
-            </div>
-
-            <v-spacer></v-spacer>
-        </v-app-bar>
-
-        <v-main>
-            <Problem />
-        </v-main>
-    </v-app>
+    <v-container fluid class="grey lighten-5">
+        <router-view />
+    </v-container>
 </template>
 
-<script>
-
-import Problem from './components/Problem';
-
-export default {
-    name: 'App',
-
-    components: {
-        Problem,
-    },
-
-    data: () => ({
-        //
-    }),
-};
-</script>
+<style>
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+}
+</style>
