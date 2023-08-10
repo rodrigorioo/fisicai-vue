@@ -10,6 +10,10 @@
                             </v-toolbar>
                             <v-card-text>
                                 <form ref="form" @submit.prevent="isRegister ? register() : login()">
+
+                                    <div class="red--text"> {{ errorMessage }}</div>
+                                    <div class="green--text"> {{ successMessage }}</div>
+
                                     <v-text-field
                                         v-model="email"
                                         name="email"
@@ -35,9 +39,9 @@
                                                   placeholder="cocnfirm password"
                                                   required
                                     ></v-text-field>
-                                    <div class="red--text"> {{ errorMessage }}</div>
+
                                     <v-btn type="submit" class="mt-4" color="primary" value="log in"
-                                        v-if="buttonDisabled">
+                                        :disabled="buttonDisabled">
                                         {{ isRegister ? stateObj.register.name : stateObj.login.name }}
                                     </v-btn>
                                     <div class="grey--text mt-4"
@@ -57,10 +61,13 @@
 
 <script>
 
-import axios from "axios";
+// import axios from "axios";
+import {authMixin} from "@/mixins/auth.mixin";
 
 export default {
     name: "LoginForm",
+
+    mixins: [authMixin],
 
     data() {
         return {
@@ -69,6 +76,7 @@ export default {
             confirmPassword: "",
             isRegister : false,
             errorMessage: "",
+            successMessage: "",
             buttonDisabled: false,
             stateObj: {
                 register :{
@@ -84,14 +92,20 @@ export default {
     },
     methods: {
 
+        clearMessages () {
+            this.successMessage = "";
+            this.errorMessage = "";
+        },
+
         login() {
 
             const { email, password } = this;
 
             this.buttonDisabled = true;
+            this.clearMessages();
 
             // Process Login
-            axios.post(`${process.env.VUE_APP_API_URL}login`, {
+            this.$axios.post(`${process.env.VUE_APP_API_URL}login`, {
                 email,
                 password,
             },
@@ -102,8 +116,9 @@ export default {
                     }
             }).then( (response) => {
 
-                console.log(response.data);
-                // TODO: Process login
+                const data = response.data;
+
+                this._auth_login(data.accessToken);
 
             }).catch( (errResponse) => {
 
@@ -125,9 +140,10 @@ export default {
                 const { email, password } = this;
 
                 this.buttonDisabled = true;
+                this.clearMessages();
 
                 // Process Login
-                axios.post(`${process.env.VUE_APP_API_URL}register`, {
+                this.$axios.post(`${process.env.VUE_APP_API_URL}register`, {
                         email,
                         password,
                     },
@@ -138,8 +154,7 @@ export default {
                         }
                     }).then( (response) => {
 
-                    console.log(response.data);
-                    // TODO: Process register
+                    this.successMessage = response.data.message;
 
                 }).catch( (errResponse) => {
 
@@ -150,7 +165,6 @@ export default {
 
                     // Clear vars
                     this.isRegister = false;
-                    this.errorMessage = "";
                     this.$refs.form.reset();
                     this.buttonDisabled = false;
 
