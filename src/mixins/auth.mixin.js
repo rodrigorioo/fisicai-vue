@@ -7,9 +7,5 @@ export const authMixin = {
         _auth_logout () {
             localStorage.removeItem("user");
         },
-
-        _auth_check () {
-            return false;
-        },
     }
 };

@@ -34,7 +34,7 @@
                                     <v-text-field v-if="isRegister"
                                                   v-model="confirmPassword"
                                                   name="confirmPassword"
-                                                  label="Confirm Password"
+                                                  label="Confirmar Password"
                                                   type="password"
                                                   placeholder="cocnfirm password"
                                                   required
@@ -118,7 +118,12 @@ export default {
 
                 const data = response.data;
 
+                // Load access token to localStorage
                 this._auth_login(data.accessToken);
+
+                // Redirect user to home page
+                this.$router
+                    .push({ name: 'home' });
 
             }).catch( (errResponse) => {
 
