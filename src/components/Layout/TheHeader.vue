@@ -34,6 +34,12 @@
                         </v-list-item-icon>
                         <v-list-item-title>Mis problemas</v-list-item-title>
                     </v-list-item>
+                    <v-list-item @click="logout">
+                        <v-list-item-icon>
+                            <v-icon>mdi-logout</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Logout</v-list-item-title>
+                    </v-list-item>
                 </v-list-item-group>
             </v-list>
         </v-navigation-drawer>
@@ -41,13 +47,25 @@
 </template>
 
 <script>
+import {authMixin} from "@/mixins/auth.mixin";
+
 export default {
     name: "TheHeader",
+
+    mixins: [authMixin],
 
     data: () => ({
         drawer: false,
         group: null,
     }),
+
+    methods: {
+
+        logout () {
+            this._auth_logout();
+            this.$router.push({ name: 'login' });
+        },
+    },
 
     watch: {
         group () {
