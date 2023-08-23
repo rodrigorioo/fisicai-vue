@@ -200,8 +200,6 @@
 
 <script>
 
-import axios from "axios";
-
 export default {
     name: "ProblemComponent",
 
@@ -235,7 +233,7 @@ export default {
             this.error_message = "";
 
             // Process request
-            axios.post(`${process.env.VUE_APP_API_URL}solve-problem`, {
+            this.$axios.post(`${process.env.VUE_APP_API_URL}solve-problem`, {
                 problem: this.problem,
             }, {
                 headers: {
@@ -275,7 +273,7 @@ export default {
             this.error_message = "";
 
             // Process request
-            axios.post(`${process.env.VUE_APP_API_URL}solve-problem`, {
+            this.$axios.post(`${process.env.VUE_APP_API_URL}solve-problem`, {
                 resolution: {
                     data: this.data,
                     requested: this.requested,

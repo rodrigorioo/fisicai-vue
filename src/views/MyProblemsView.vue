@@ -30,12 +30,29 @@
                             </tr>
                             </thead>
                             <tbody>
-<!--                            <tr-->
-<!--                                v-for="item in desserts"-->
-<!--                                :key="item.name">-->
-<!--                                <td>{{ item.name }}</td>-->
-<!--                                <td>{{ item.calories }}</td>-->
-<!--                            </tr>-->
+                            <tr
+                                v-for="problem in problems"
+                                :key="problem.id">
+                                <td>{{ problem.problem }}</td>
+                                <td>
+                                    <v-chip color="success"
+                                        v-if="problem.processed_data">
+                                        <v-icon>
+                                            mdi-check
+                                        </v-icon>
+                                    </v-chip>
+                                    <v-chip color="danger"
+                                             v-else>
+                                        <v-icon>
+                                            mdi-close
+                                        </v-icon>
+                                    </v-chip>
+                                </td>
+                                <td>
+                                    <DialogProblem
+                                        :problem="problem" />
+                                </td>
+                            </tr>
                             </tbody>
                         </template>
                     </v-simple-table>
@@ -50,16 +67,20 @@
 <script>
 
 import TheHeader from "@/components/Layout/TheHeader.vue";
+import DialogProblem from "@/components/DialogProblem.vue";
 
 export default {
-    name: "MyProblems",
+    name: "MyProblemsView",
 
     components: {
+        DialogProblem,
         TheHeader
     },
 
     data () {
         return {
+            problems: [],
+
             showErrorMessage: false,
             errorMessage: "",
         }
@@ -71,7 +92,7 @@ export default {
 
             this.$axios.get(`${process.env.VUE_APP_API_URL}problems`).then( (response) => {
 
-                console.log(response);
+                this.problems = response.data;
 
             }).catch( (errResponse) => {
 
@@ -88,6 +109,7 @@ export default {
 
     mounted() {
 
+        this.getProblemsOfUser();
 
     },
 }

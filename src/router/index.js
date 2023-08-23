@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import SolveProblemView from "@/views/SolveProblemView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import {requiredLogin, requiredLogout} from "@/middleware/auth.middleware";
-import MyProblems from "@/views/MyProblems.vue";
+import MyProblemsView from "@/views/MyProblemsView.vue";
 
 Vue.use(VueRouter)
 
@@ -27,7 +27,7 @@ const routes = [
     {
         path: '/mis-problemas',
         name: 'mis-problemas',
-        component: MyProblems,
+        component: MyProblemsView,
         meta: {
             requiredAuth: true,
         }
